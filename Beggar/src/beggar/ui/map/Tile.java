@@ -18,6 +18,18 @@ public enum Tile {
 		setColor(color);
 	}
 
+	public boolean isDiggable(){
+		return this == Tile.WALL;
+	}
+	
+	public boolean isGround(){
+		return this == Tile.FLOOR && !isBounds();
+	}
+	
+	public boolean isBounds(){
+		return this == Tile.BOUNDS;
+	}
+	
 	public char getGlyph() {
 		return glyph;
 	}

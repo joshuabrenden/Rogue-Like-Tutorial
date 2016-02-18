@@ -2,6 +2,8 @@ package beggar.ui.map;
 
 import java.awt.Color;
 
+import beggar.actor.Creature;
+
 public class World {
 	private Tile[][] tiles;
 	private int width;
@@ -27,6 +29,30 @@ public class World {
 	public Color color(int x, int y){
         return tile(x, y).getColor();
     }
+	
+	public void dig(int x, int y){
+		if (getTiles()[x][y].isDiggable()){
+			updateTiles(x,y,Tile.FLOOR);
+		}
+	}
+	
+	private void updateTiles(int x, int y, Tile tile){
+		tiles[x][y] = tile;
+	}
+	
+	public void addAtEmptyLocation(Creature creature){
+		int x;
+	    int y;
+
+	    do {
+	        x = (int)(Math.random() * getWidth());
+	        y = (int)(Math.random() * getHeight());
+	    }
+	    while (!tile(x,y).isGround());
+
+	    creature.setX(x);
+	    creature.setY(y);
+	}
 	
 	public int getWidth() {
 		return width;

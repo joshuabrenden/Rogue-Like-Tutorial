@@ -3,11 +3,14 @@ package beggar.ui;
 import java.awt.event.KeyEvent;
 
 import asciiPanel.AsciiPanel;
+import beggar.actor.Creature;
+import beggar.actor.CreatureFactory;
 import beggar.ui.map.World;
 import beggar.ui.map.WorldBuilder;
 
 public class PlayScreen implements Screen {
 	private World world;
+	private Creature player;
 	private int centerX;
 	private int centerY;
 	private int screenWidth;
@@ -19,8 +22,7 @@ public class PlayScreen implements Screen {
         int top = getScrollY();
    
         displayTiles(terminal, left, top);
-        terminal.write('X', getCenterX() - left, getCenterY() - top);
-        
+        terminal.write(player.getGlyph(), player.getX() - left, player.getY() - top, player.getColor());
 	}
 
 	@Override
@@ -29,17 +31,17 @@ public class PlayScreen implements Screen {
         case KeyEvent.VK_ESCAPE: return new LoseScreen();
         case KeyEvent.VK_ENTER: return new WinScreen();
         case KeyEvent.VK_LEFT:
-        case KeyEvent.VK_H: scrollBy(-1, 0); break;
+        case KeyEvent.VK_H: player.moveBy(-1, 0); break;
         case KeyEvent.VK_RIGHT:
-        case KeyEvent.VK_L: scrollBy( 1, 0); break;
+        case KeyEvent.VK_L: player.moveBy( 1, 0); break;
         case KeyEvent.VK_UP:
-        case KeyEvent.VK_K: scrollBy( 0,-1); break;
+        case KeyEvent.VK_K: player.moveBy( 0,-1); break;
         case KeyEvent.VK_DOWN:
-        case KeyEvent.VK_J: scrollBy( 0, 1); break;
-        case KeyEvent.VK_Y: scrollBy(-1,-1); break;
-        case KeyEvent.VK_U: scrollBy( 1,-1); break;
-        case KeyEvent.VK_B: scrollBy(-1, 1); break;
-        case KeyEvent.VK_N: scrollBy( 1, 1); break;
+        case KeyEvent.VK_J: player.moveBy( 0, 1); break;
+        case KeyEvent.VK_Y: player.moveBy(-1,-1); break;
+        case KeyEvent.VK_U: player.moveBy( 1,-1); break;
+        case KeyEvent.VK_B: player.moveBy(-1, 1); break;
+        case KeyEvent.VK_N: player.moveBy( 1, 1); break;
 		}
     
         return this;
@@ -49,6 +51,9 @@ public class PlayScreen implements Screen {
 		setScreenWidth(80);
 		setScreenHeight(21);
 		createWorld();
+		
+		CreatureFactory creatureFactory = new CreatureFactory(world);
+		player = creatureFactory.newPlayer();
 	}
 	
 	public int getScrollX() {
@@ -70,6 +75,7 @@ public class PlayScreen implements Screen {
         setCenterX(Math.max(0, Math.min(getCenterX() + mx, world.getWidth() - 1)));
         setCenterY(Math.max(0, Math.min(getCenterY() + my, world.getHeight() - 1)));
     }
+	
 	
 	public int getScrollY() {
 	    return Math.max(0, Math.min(getCenterY() - getScreenHeight() / 2, world.getHeight() - getScreenHeight()));
